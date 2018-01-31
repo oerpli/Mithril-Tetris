@@ -1,0 +1,28 @@
+{
+  "name": "Mithril-Tetris",
+  "version": "0.1.0",
+  "description": "Mithril-TypeScript",
+  "scripts": {
+    "serve": "http-server -p 3000 public",
+    "compile": "browserify --debug src/main.ts -p [ tsify --project src/tsconfig.json ] -o public/js/app.js",
+    "build": "browserify src/main.ts -p [ tsify --project src/tsconfig.json ] | uglifyjs -cm -o public/js/app.js",
+    "watch": "watchify -v --debug src/main.ts -p [ tsify --project src/tsconfig.json ] -o public/js/app.js",
+    "start": "npm-run-all -p watch serve",
+    "clean": "rm -f public/js/app.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "mithril": "^1.1.6"
+  },
+  "devDependencies": {
+    "@types/mithril": "^1.1.12",
+    "browserify": "^15.2.0",
+    "http-server": "^0.11.1",
+    "npm-run-all": "^4.1.2",
+    "tsify": "^3.0.4",
+    "tslint": "^5.9.1",
+    "typescript": "^2.6.2",
+    "uglify-js": "^3.3.9",
+    "watchify": "^3.10.0"
+  }
+}
