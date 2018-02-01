@@ -7,7 +7,8 @@ class Config {
     static Max = 15;
     static Min = 1;
     static Bottom = 30;
-    static FrameTime = 350; // ms - same value as in CSS!
+    static FrameTimeFixed = 350
+    static FrameTime = Config.FrameTimeFixed; // ms - same value as in CSS!
 }
 
 
@@ -201,13 +202,23 @@ export abstract class Game {
                         m.redraw();
                         break;
                     case ("ArrowDown"):
-                        Game.Active.TurnRight();
-                        m.redraw();
+                        Config.FrameTime = 50;
+                        // Game.Active.TurnRight();
+                        // m.redraw();
                         break;
                     case ("KeyR"):
                         Game.Reset();
                         break;
-                    case ("Space"): Game.DropBlock(); break;
+                    case ("Space"):
+                        Config.FrameTime = 10;
+                        break;
+                }
+            });
+            document.body.addEventListener('keyup', e => {
+                switch (e.code) {
+                    case ("ArrowDown"):
+                        Config.FrameTime = Config.FrameTimeFixed;
+                        break;
                 }
             });
         }
@@ -244,35 +255,11 @@ export abstract class Game {
                 touching = true;
             }
         });
-        if (touching) {
-            console.log(Game.Reserved);
-            console.log("Touching!");
-        }
         return touching;
     }
 
-    static ftTemp = Config.FrameTime;
     static DropBlock = () => {
         Config.FrameTime = 10;
-    }
-
-    static PutDownBlock = () => {
-        Config.FrameTime = Game.ftTemp;
-        var c = Game.Active.getCoordinates();
-        var ys: number[] = [];
-        c.forEach(a => {
-            var x = a[0];
-            var y = a[1] - 1;
-            console.log("laying down at " + x + " " + (y + 1));
-            Game.Reserved[y][x] = Game.Active.type;
-            ys.push(y);
-            if (y <= 2) {
-                console.log("Y < 2");
-                Game.Reset();
-            }
-        }
-        );
-        return ys;
     }
     static getViewBlock = (x: number, y: number, t: Blocks) => {
         return m('.grid-item', { style: `background-color: var(--${Blocks[t]});grid-area: ${y}/${x}/${y}/${x};` }, " ")
@@ -294,21 +281,45 @@ export abstract class Game {
         return m('.tetris-grid', [Game.Active.viewActive(vnode), blocks]);
     }
 
+    static touching: boolean = false;
+
+    static putDownHandler: number;
     static nextStep = () => {
         if (Game.Running) {
             m.redraw();
             setTimeout(Game.nextStep, Config.FrameTime);
         }
-        Game.Active.posY++;
-        Game.moveH = 0;
         if (Game.Touching()) {
-            let ys = Game.PutDownBlock();
-            Game.deleteLines(ys);
-
-            Game.Active = new Block();
-            return true;
+            Game.putDownHandler = setTimeout(Game.PutDownBlock, Config.FrameTimeFixed * 2);
+        } else {
+            clearTimeout(Game.putDownHandler);
+            Game.Active.posY++;
         }
         return false;
+    }
+
+    static PutDownBlock = () => {
+        return new Promise<number[]>(function (resolve, reject) {
+            if (Game.Touching()) {
+                Config.FrameTime = Config.FrameTimeFixed;
+                var c = Game.Active.getCoordinates();
+                var ys: number[] = [];
+                c.forEach(a => {
+                    var x = a[0];
+                    var y = a[1] - 1;
+                    console.log("laying down at " + x + " " + (y + 1));
+                    Game.Reserved[y][x] = Game.Active.type;
+                    ys.push(y);
+                    if (y <= 2) {
+                        console.log("Y < 2");
+                        Game.Reset();
+                    }
+                }
+                );
+                resolve(ys);
+            }
+            reject([]);
+        }).then(ys => { Game.deleteLines(ys); Game.Active = new Block(); return true; }).catch(a => false);
     }
 
     static deleteLines = (yi: number[]) => {
