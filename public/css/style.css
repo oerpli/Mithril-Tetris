@@ -1,6 +1,8 @@
-body, td, th {
+body, td, th,a {
+	background-color: #222;
 	font-family: helvetica,arial,sans-serif;
 	font-size: 14px;
+	color: #ccc;
 }
 
 .tetris-grid {
@@ -8,7 +10,7 @@ body, td, th {
 	--height: 30;
 	--width: 15;
 	display: grid;
-	background-color: rgb(73, 73, 73);
+	background-color: #111;
 	grid-column-gap:  0px;
 	grid-row-gap: 0px;
 	grid-template-columns: repeat(var(--width),var(--size));
@@ -34,13 +36,22 @@ body, td, th {
 
 .grid-item{
 	--E: rgb(36, 36, 36);
-	--L: rgba(39, 189, 144, 1);
-	--J: rgba(0, 240, 220, 1);
-	--Z: rgba(255, 0, 0, 1);
-	--S: rgba(229, 255, 0, 1);
-	--O: rgba(9, 255, 0, 1);
-	--I: rgba(0, 153, 255, 1);
-	--T: rgba(255, 0, 221, 1);
+
+	--S: #440154;
+	--L: #443983;
+	--Z: #31688e;
+	--J: #21918c;
+	--S: #35b779;
+	--O: #90d743;
+	--I: #fde725;
+
+	/* --L: rgba(39, 189, 144, 1); */
+	/* --J: rgba(0, 240, 220, 1); */
+	/* --Z: rgba(255, 0, 0, 1); */
+	/* --S: rgba(229, 255, 0, 1); */
+	/* --O: rgba(9, 255, 0, 1); */
+	/* --I: rgba(0, 153, 255, 1); */
+	/* --T: rgba(255, 0, 221, 1); */
 	padding: 1px;
 	color: slategray;
 }
