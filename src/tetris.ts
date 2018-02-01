@@ -8,9 +8,9 @@ import * as tetris from './models/Tetris'
 export default {
     view(vnode) {
         return m('.page', [
-            m(nav),
+            // m(nav),
             m('h1', ["Points: ",tetris.Game.Points]),
-            m('p', "There should be a tetris game here:"),
+            // m('p', "There should be a tetris game here:"),
             m(tetris.Game),
         ])
     }
